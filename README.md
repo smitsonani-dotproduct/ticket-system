@@ -1,5 +1,5 @@
 ### Folder structure 
-
+```
 ticket_system/
 │
 ├── manage.py
@@ -36,3 +36,4 @@ ticket_system/
 ├── requirements.txt               # Project dependencies
 │
 └── README.md                      # Project documentation
+```
