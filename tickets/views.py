@@ -1,26 +1,30 @@
 # from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action, permission_classes, api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Station, Ticket
 from django.contrib.auth.models import User
+from .models import Station, Ticket
 from .serializers import StationSerializer, TicketSerializer, UserSerializer
 
 
 # Protected views & Read only viewset
 class UserViewSet(ReadOnlyModelViewSet):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    queryset = User.objects.all()
 
 
-# Public views
+# Public views + Only authenticated users can modify
 class StationViewSet(ModelViewSet):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
-    # permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ["list", "retrive"]:
+            return []
+        return [IsAuthenticated()]
 
 
 # Protected views
