@@ -4,7 +4,7 @@ from .views import StationViewSet, TicketViewSet, UserViewSet
 from . import views
 
 router = DefaultRouter()
-# router.register(r"users", UserViewSet)
+router.register(r"users", UserViewSet)
 router.register(r"stations", StationViewSet)
 router.register(r"tickets", TicketViewSet, basename="ticket")
 

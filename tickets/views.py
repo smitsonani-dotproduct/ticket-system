@@ -15,6 +15,13 @@ class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = User.objects.all()
+        user = self.request.user
+        if user.is_staff:
+            return queryset
+        return User.objects.filter(username=user)
+
 
 # Public views + Only authenticated users can modify
 class StationViewSet(ModelViewSet):
