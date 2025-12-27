@@ -51,9 +51,9 @@ class TicketViewSet(ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="calculate-price")
     def calculate_price(self, request):
-        qs = request.query_params
-        from_station_id = qs.get("from_station")
-        to_station_id = qs.get("to_station")
+        query_params = request.query_params
+        from_station_id = query_params.get("from_station")
+        to_station_id = query_params.get("to_station")
 
         if not from_station_id or not to_station_id:
             return Response(
@@ -102,9 +102,9 @@ class TicketViewSet(ModelViewSet):
 @api_view(http_method_names=["GET"])
 @permission_classes([IsAuthenticated])
 def calculate_price(request):
-    qs = request.query_params
-    from_station_id = qs.get("from_station")
-    to_station_id = qs.get("to_station")
+    query_params = request.query_params
+    from_station_id = query_params.get("from_station")
+    to_station_id = query_params.get("to_station")
 
     if not from_station_id or not to_station_id:
         return Response(
