@@ -10,7 +10,7 @@ router.register(r"tickets", TicketViewSet, basename="ticket")
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("calculate-price/", calculate_price),
+    path("calculate-price/", calculate_price, name='calculate-price'),
 ]
 
 # # Station APIs
