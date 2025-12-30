@@ -1,1 +1,1 @@
-print("From init (ticket app)")
+print("Starting the ticket application :)")
