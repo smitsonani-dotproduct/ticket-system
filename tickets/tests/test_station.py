@@ -2,11 +2,9 @@
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-from rest_framework.test import APITestCase, force_authenticate
-from rest_framework.authtoken.models import Token
+from rest_framework.test import APITestCase
 from rest_framework import status
-from tickets.serializers import UserSerializer, StationSerializer, TicketSerializer
-from tickets.models import Station, Ticket
+from tickets.models import Station
 
 # Create your tests here.
 class StationTests(APITestCase):

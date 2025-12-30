@@ -2,25 +2,16 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from rest_framework import status
-from tickets.serializers import UserSerializer, StationSerializer, TicketSerializer
 from tickets.models import Station, Ticket
 
 # Create your tests here.
 class TicketTests(APITestCase):
     def setUp(self):
         # Users
-        self.admin = User.objects.create_superuser(
-            username="admin",
-            password="admin"
-        )
-
-        self.user = User.objects.create_user(
-            username="test",
-            password="test@123"
-        )
+        self.admin = User.objects.create_superuser(username="admin", password="admin")
+        self.user = User.objects.create_user(username="test",password="test@123")
 
         # Stations
         self.station1 = Station.objects.create(name="Station A")
