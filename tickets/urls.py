@@ -1,7 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import StationViewSet, TicketViewSet, UserViewSet, calculate_price
-
 # from . import views
 
 router = DefaultRouter()

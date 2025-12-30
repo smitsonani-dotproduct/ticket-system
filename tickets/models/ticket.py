@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from tickets.models import Station
 
-
 class Ticket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tickets")
     from_station = models.ForeignKey(

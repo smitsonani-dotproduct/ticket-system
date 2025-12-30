@@ -5,8 +5,6 @@ from tickets.models import Station, Ticket
 from django.contrib.auth.models import User
 
 faker = Faker()
-
-
 class Command(BaseCommand):
     help = "Seed fake data into Station and Ticket tables"
 

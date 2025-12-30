@@ -7,7 +7,6 @@ from tickets.serializers import TicketSerializer
 from tickets.models import Ticket, Station
 from rest_framework.exceptions import ValidationError
 
-
 # Protected views
 class TicketViewSet(ModelViewSet):
     serializer_class = TicketSerializer

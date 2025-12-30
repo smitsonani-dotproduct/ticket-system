@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from tickets.serializers import UserSerializer
 
-
 # Protected views & Read only viewset
 class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
