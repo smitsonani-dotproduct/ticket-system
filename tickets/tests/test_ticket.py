@@ -93,7 +93,7 @@ class TicketTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
         
-    def test_user_ticket_retrieve_valid(self):
+    def test_user_ticket_retrieve(self):
         login_success = client.login(username="test1", password="test@123")
         self.assertTrue(login_success)
         
@@ -108,7 +108,7 @@ class TicketTests(APITestCase):
         response = client.get(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     
-    def test_create_ticket_same_station_invalid(self):
+    def test_create_ticket_same_station(self):
         login_success = client.login(username="test1", password="test@123")
         self.assertTrue(login_success)
         
@@ -123,7 +123,7 @@ class TicketTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("non_field_errors", response.data)
     
-    def test_calculate_price_same_station_invalid(self):
+    def test_calculate_price_same_station(self):
         login_success = client.login(username="test1", password="test@123")
         self.assertTrue(login_success)
 
@@ -145,14 +145,14 @@ class TicketTests(APITestCase):
         self.assertIn("price", response.data)
         self.assertEqual(response.data["price"], price)
         
-    def test_calculate_price_missing_params_invalid(self):
+    def test_calculate_price_missing_params(self):
         login_success = client.login(username="test2", password="test@123")
         self.assertTrue(login_success)
 
         response = client.get(self.calculate_price_url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
-    def test_calculate_price_missing_station_invalid(self):
+    def test_calculate_price_missing_station_params(self):
         login_success = client.login(username="test2", password="test@123")
         self.assertTrue(login_success)
 
