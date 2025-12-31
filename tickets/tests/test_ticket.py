@@ -53,6 +53,12 @@ class TicketTests(APITestCase):
         self.detail_url = reverse("ticket-detail", args=[self.ticket1.id])
         self.calculate_price_url = reverse("ticket-calculate-price")
 
+    # Public
+    def test_ticket_list_public(self):
+        response = client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotEqual(len(response.data), 3)
+        
     def test_user_sees_only_own_tickets(self):
         login_success = client.login(username="test1", password="test@123")
         self.assertTrue(login_success)
@@ -116,6 +122,16 @@ class TicketTests(APITestCase):
         response = client.get(self.calculate_price_url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
+    def test_create_ticket_public(self):
+        data = {
+            "from_station": self.station1.id,
+            "to_station": self.station2.id,
+            "date": "2025-12-12",
+            "price": 100 + abs(self.station1.id-self.station2.id)
+        }
+        response = self.client.post(self.list_url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
     def test_create_ticket(self):
         login_success = client.login(username="test2", password="test@123")
         self.assertTrue(login_success)
@@ -124,8 +140,7 @@ class TicketTests(APITestCase):
             "from_station": self.station1.id,
             "to_station": self.station2.id,
             "date": "2025-12-12",
-            "price": 120
+            "price": 100 + abs(self.station1.id-self.station2.id)
         }
         response = client.post(self.list_url, data)
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
