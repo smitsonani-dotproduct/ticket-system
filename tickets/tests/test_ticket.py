@@ -93,8 +93,23 @@ class TicketTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
         
+    def test_user_ticket_retrieve_valid(self):
+        login_success = client.login(username="test1", password="test@123")
+        self.assertTrue(login_success)
+        
+        response = client.get(self.detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0].id, self.ticket1.id)
+        
+    def test_user_ticket_retrieve_invalid(self):
+        login_success = client.login(username="test2", password="test@123")
+        self.assertTrue(login_success)
+        
+        response = client.get(self.detail_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    
     def test_create_ticket_same_station_invalid(self):
-        login_success = client.login(username="admin", password="admin")
+        login_success = client.login(username="test1", password="test@123")
         self.assertTrue(login_success)
         
         data = {
