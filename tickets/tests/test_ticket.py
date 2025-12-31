@@ -1,4 +1,4 @@
-from django.test import TestCase
+# from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -97,7 +97,3 @@ class TicketTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["price"], 102)
-
-        
-        

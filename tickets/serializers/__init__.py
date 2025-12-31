@@ -1,5 +1,5 @@
-from .station_serializer import StationSerializer
-from .ticket_serializer import TicketSerializer
-from .user_serializer import UserSerializer
+from .station import StationSerializer
+from .ticket import TicketSerializer
+from .user import UserSerializer
 
 __all__ = [UserSerializer, StationSerializer, TicketSerializer]
