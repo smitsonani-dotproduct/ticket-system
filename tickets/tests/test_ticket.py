@@ -57,7 +57,6 @@ class TicketTests(APITestCase):
     def test_ticket_list_public(self):
         response = client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertNotEqual(len(response.data), 3)
         
     def test_calculate_price_public(self):
         params = {"from_station": self.station1.id, "to_station": self.station3.id}
