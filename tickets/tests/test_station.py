@@ -38,10 +38,13 @@ class StationTests(APITestCase):
     # Public 
     def test_list_stations_public(self):
         response = client.get(self.list_url)
+        
         stations = Station.objects.all()
         serializer = StationSerializer(stations, many=True)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+        self.assertEqual(len(response.data), 2)
     
     def test_retrieve_station_public(self):
         response = client.get(self.detail_url)
