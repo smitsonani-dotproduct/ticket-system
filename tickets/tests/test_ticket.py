@@ -99,7 +99,7 @@ class TicketTests(APITestCase):
         
         response = client.get(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0].id, self.ticket1.id)
+        self.assertEqual(response.data["id"], self.ticket1.id)
         
     def test_user_ticket_retrieve_invalid(self):
         login_success = client.login(username="test2", password="test@123")
