@@ -1,99 +1,131 @@
-# from django.test import TestCase
+from datetime import date
+
+from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 
 from rest_framework.test import APITestCase
 from rest_framework import status
 from tickets.models import Station, Ticket
+from tickets.serializers import TicketSerializer
+
+# initialize the APIClient app
+client = Client()
 
 # Create your tests here.
 class TicketTests(APITestCase):
     def setUp(self):
         # Users
         self.admin = User.objects.create_superuser(username="admin", password="admin")
-        self.user = User.objects.create_user(username="test",password="test@123")
+        self.user1 = User.objects.create_user(username="test1",password="test@123")
+        self.user2 = User.objects.create_user(username="test2",password="test@123")
 
         # Stations
-        self.station1 = Station.objects.create(name="Station A")
-        self.station2 = Station.objects.create(name="Station B")
-        self.station3 = Station.objects.create(name="Station C")
+        self.station1 = Station.objects.create(name="Mumbai")
+        self.station2 = Station.objects.create(name="Delhi")
+        self.station3 = Station.objects.create(name="Pune")
 
-        # Ticket
-        self.ticket = Ticket.objects.create(
-            user=self.user,
+        # Tickets
+        self.ticket1 = Ticket.objects.create(
+            user=self.user1,
             from_station=self.station1,
             to_station=self.station2,
-            date="2025-03-01",
-            price=101
+            date=date.today(),
+            price= 100 + abs(self.station2.id - self.station1.id),
+        )
+        self.ticket2 = Ticket.objects.create(
+            user=self.user2,
+            from_station=self.station2,
+            to_station=self.station3,
+            date=date.today(),
+            price=100 + abs(self.station3.id - self.station2.id),
+        )
+        self.ticket3 = Ticket.objects.create(
+            user=self.user1,
+            from_station=self.station1,
+            to_station=self.station3,
+            date=date.today(),
+            price= 100 + abs(self.station2.id - self.station1.id),
         )
         
+        # urls
+        self.list_url = reverse("ticket-list")
+        self.detail_url = reverse("ticket-detail", args=[self.ticket1.id])
+        self.calculate_price_url = reverse("ticket-calculate-price")
+
     def test_user_sees_only_own_tickets(self):
-        self.client.login(username="test", password="test@123")
-        url = reverse("ticket-list")
-        response = self.client.get(url)
-        
-        print(
-            "\nlogged_in client =>",
-            response.wsgi_request.user,
-            response.wsgi_request.user.is_authenticated,
-            response.wsgi_request.user.is_staff
-        )
+        login_success = client.login(username="test1", password="test@123")
+        self.assertTrue(login_success)
+
+        response = client.get(self.list_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["id"], self.ticket1.id)
         
     def test_admin_sees_all_tickets(self):
-        self.client.login(username="admin", password="admin")
-        url = reverse("ticket-list")
-        response = self.client.get(url)
+        login_success = client.login(username="admin", password="admin")
+        self.assertTrue(login_success)
 
-        print(
-            "\nlogged_in client =>",
-            response.wsgi_request.user,
-            response.wsgi_request.user.is_authenticated,
-            response.wsgi_request.user.is_staff
-        )
+        response = client.get(self.list_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+        
+    def test_create_ticket_same_station_invalid(self):
+        login_success = client.login(username="admin", password="admin")
+        self.assertTrue(login_success)
+        
+        data = {
+            "from_station": self.station1.id,
+            "to_station": self.station1.id,
+            "date": date.today(),
+            "price": 100,
+        }
+        response = client.post(self.list_url, data, content_type='application/json')
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("non_field_errors", response.data)
     
+    def test_calculate_price_same_station_invalid(self):
+        login_success = client.login(username="test1", password="test@123")
+        self.assertTrue(login_success)
+
+        params = {"from_station": self.station1.id, "to_station": self.station1.id}
+        response = client.get(self.calculate_price_url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_calculate_price(self):
+        login_success = client.login(username="test1", password="test@123")
+        self.assertTrue(login_success)
+        
+        params = {"from_station": self.station1.id, "to_station": self.station3.id}
+        response = client.get(self.calculate_price_url, params)
+        
+        price = abs(self.station3.id - self.station1.id) + 100
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("price", response.data)
+        self.assertEqual(response.data["price"], price)
+        
+    def test_calculate_price_missing_params_invalid(self):
+        login_success = client.login(username="test2", password="test@123")
+        self.assertTrue(login_success)
+
+        response = client.get(self.calculate_price_url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
     def test_create_ticket(self):
-        self.client.login(username="test", password="test@123")
-        url = reverse("ticket-list")
+        login_success = client.login(username="test2", password="test@123")
+        self.assertTrue(login_success)
+
         data = {
             "from_station": self.station1.id,
             "to_station": self.station2.id,
             "date": "2025-12-12",
             "price": 120
         }
-        response = self.client.post(url, data)
-
-        print(
-            "\nlogged_in client =>",
-            response.wsgi_request.user,
-            response.wsgi_request.user.is_authenticated,
-            response.wsgi_request.user.is_staff
-        )
-
-        # print('user =>', self.user.username)
-        # print('resp =>', response.data['user'])
+        response = client.post(self.list_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
-    def test_calculate_price(self):
-        self.client.login(username="test", password="test@123")
-        url = reverse("calculate-price")
-        
-        response = self.client.get(
-            url,
-            {"from_station": self.station1.id, "to_station": self.station3.id}
-        )
-        
-        print('\nResponse =>', response.data)
-        
-        print(
-            "\nlogged_in client =>",
-            response.wsgi_request.user,
-            response.wsgi_request.user.is_authenticated,
-            response.wsgi_request.user.is_staff
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
