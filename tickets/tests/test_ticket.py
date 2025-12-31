@@ -152,6 +152,14 @@ class TicketTests(APITestCase):
         response = client.get(self.calculate_price_url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
+    def test_calculate_price_missing_station_invalid(self):
+        login_success = client.login(username="test2", password="test@123")
+        self.assertTrue(login_success)
+
+        params = {"from_station": self.station1.id}
+        response = client.get(self.calculate_price_url, params)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
     def test_create_ticket(self):
         login_success = client.login(username="test2", password="test@123")
         self.assertTrue(login_success)
