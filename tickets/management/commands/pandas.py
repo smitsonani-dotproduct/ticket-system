@@ -74,7 +74,7 @@ class Command(BaseCommand):
         # print('value count :)', df['user_id'].value_counts())
 
 
-        # # Scenario - Total amount spent by each unique user to buy tickets
+        # # 1. Scenario - Total amount spent by each unique user to buy tickets
         # amount_spent = df.groupby("user_id", as_index=False)["price"].agg(["count", "min", "max", "sum", "mean"]).rename(
         #     columns={
         #         "count":"count", 
@@ -89,11 +89,11 @@ class Command(BaseCommand):
         # print('Table :)\n',amount_spent2)
         
         
-        # # Most populer routes
+        # # 2. Scenario - Most populer routes
         # route_usage = df.groupby(by=["from_station_id","to_station_id"]).size().sort_values(ascending=False)
         # print('Route usage :)\n', route_usage)
 
-        # # Monthly spending
+        # # 3. Scenario - Monthly spending
         # df["date"] = pd.to_datetime(df["date"])
         # monthly_spend = (df.groupby(df["date"].dt.to_period("M"))["price"].sum())
         # print('Monthly spend :)',monthly_spend)
@@ -105,8 +105,23 @@ class Command(BaseCommand):
 
         # file_path = os.path.join(output_dir, "output.xlsx")
         # df.to_excel(file_path, index=False)
-                
         
+        # # memory usage ex        
+        # print('memory usage :)\n',df.memory_usage())
+
+        # # loc(Label-based selection) & iloc(index-based selection)
+        # print('loc example :)\n',) # row
+        # print(df.loc[0]) 
+        # print(df.loc[0:3])   # multple rows + includes 3
+        # print(df.loc[:, ["user_id", "price"]]) # row + column togather
+        # print(df.loc[0:5, ["user_id", "price"]]) # row + column togather
+        # print(df.loc[df["user_id"] == 2])
+
+        # print('iloc example :)\n')
+        # print(df.iloc[0])  
+        # print(df.iloc[0:3])  # excludes 3
+        # print(df.iloc[:, [1, 5]]) # row + specific columns by index
+        # print(df.iloc[0:5, 1:4]) # rows + columns
 
 
 
