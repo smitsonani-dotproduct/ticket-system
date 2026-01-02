@@ -3,3 +3,4 @@ djangorestframework==3.16.1
 django-extensions==4.1
 Faker==39.0.0
 pandas
+openpyxl
